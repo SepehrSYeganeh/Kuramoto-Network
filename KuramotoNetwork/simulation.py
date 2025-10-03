@@ -55,12 +55,15 @@ class KuramotoGrid1d:
         """
         d(theta)/dt = omega + coupling + noise
         """
+        # coupling term
         lag_left = np.roll(self.theta_arr, 1) - self.theta_arr
         lag_right = np.roll(self.theta_arr, -1) - self.theta_arr
         coupling_term = self.kappa * (np.sin(lag_left) + np.sin(lag_right)) * self.dt
 
+        # noise term
         noise_term = self.xi * np.random.normal(size=self.N, scale=np.sqrt(self.dt))
 
+        # omega term
         omega_term = self.omega_arr * self.dt
 
         self.theta_arr += omega_term + coupling_term + noise_term
@@ -72,7 +75,7 @@ class KuramotoGrid1d:
     #################################################
     # simulation
     #################################################
-    def run(self):
+    def run(self) -> None:
         for t in range(self.steps):
             self.time += self.dt
             self.update_phases()
@@ -82,7 +85,7 @@ class KuramotoGrid1d:
     #################################################
     # final_r
     #################################################
-    def final_r(self, transient_steps, steady_state):
+    def final_r(self, transient_steps, steady_state) -> float:
         # running until system relaxes
         for t in range(transient_steps):
             self.time += self.dt
@@ -103,10 +106,10 @@ class KuramotoGrid1d:
 class KuramotoGrid2d:
     dim = 2
 
-    def __init__(self, N: int, sigma: float, kappa: float, xi: float,
+    def __init__(self, L: int, sigma: float, kappa: float, xi: float,
                  steps: int, dt: float, snapshot_frames: int):
         """
-        :param N: number of oscillators
+        :param L: length of grid
         :param sigma: std of omega distribution
         :param kappa: coupling strength
         :param xi: noise strength
@@ -121,7 +124,8 @@ class KuramotoGrid2d:
         self.snapshot_frames = snapshot_frames
 
         # initialize parameters
-        self.N = N
+        self.L = L
+        self.N = int(L * L)
         self.sigma = sigma
         self.kappa = kappa
         self.xi = xi
@@ -129,20 +133,19 @@ class KuramotoGrid2d:
         # initialize oscillators
         self.theta_arr = np.linspace(0, 2 * np.pi, self.N, endpoint=False)  # phase
         np.random.shuffle(self.theta_arr)
-        self.theta_arr = np.reshape(self.theta_arr, (np.sqrt(self.N).astype(int), np.sqrt(self.N).astype(int)))
+        self.theta_arr = np.reshape(self.theta_arr, (L, L))
         self.omega_arr = np.random.normal(size=self.N, scale=self.sigma)  # natural frequencies
         np.random.shuffle(self.omega_arr)
-        self.omega_arr = np.reshape(self.omega_arr, (np.sqrt(self.N).astype(int), np.sqrt(self.N).astype(int)))
+        self.omega_arr = np.reshape(self.omega_arr, (L, L))
 
         # initialize data files
-        datafiles.init_data(self.N, self.dim)
-        datafiles.init_param(self.dim)
+        io.init_data(self.N, self.dim)
         self.update_files()
 
     #################################################
     # order parameter
     #################################################
-    def order_parameter(self):
+    def order_parameter(self) -> tuple[float, float]:
         """
         r * exp(i * psi) = mean(exp(i * theta_j))
         """
@@ -155,27 +158,34 @@ class KuramotoGrid2d:
     #################################################
     # update
     #################################################
-    def update_phases(self):
+    def update_phases(self) -> None:
+        """
+        d(theta)/dt = omega + coupling + noise
+        """
+        # coupling term
         lag_left = np.roll(self.theta_arr, 1, axis=1) - self.theta_arr
         lag_right = np.roll(self.theta_arr, -1, axis=1) - self.theta_arr
         lag_down = np.roll(self.theta_arr, 1, axis=0) - self.theta_arr
         lag_up = np.roll(self.theta_arr, -1, axis=0) - self.theta_arr
-        coupling_arr = self.kappa * (np.sin(lag_left) + np.sin(lag_right) + np.sin(lag_up) + np.sin(lag_down)) * self.dt
+        coupling_term = self.kappa * (np.sin(lag_left) + np.sin(lag_right) +
+                                      np.sin(lag_up) + np.sin(lag_down)) * self.dt
 
-        noise_arr = self.xi * np.random.normal(size=self.N, scale=np.sqrt(self.dt)).reshape(
-            np.sqrt(self.N).astype(int), np.sqrt(self.N).astype(int))
+        # noise term
+        noise_term = self.xi * np.random.normal(size=self.N, scale=np.sqrt(self.dt)).reshape(self.L, self.L)
 
-        self.theta_arr += self.omega_arr * self.dt + coupling_arr + noise_arr
+        # omega term
+        omega_term = self.omega_arr * self.dt
 
-    def update_files(self):
-        datafiles.append_theta(self.time, self.theta_arr.flatten(), self.dim)
+        self.theta_arr += omega_term + coupling_term + noise_term
+
+    def update_files(self) -> None:
         r, psi = self.order_parameter()
-        datafiles.append_param(self.time, r, psi, self.dim)
+        io.append_data(self.dim, self.time, r, psi, self.theta_arr.flatten())
 
     #################################################
     # run simulation
     #################################################
-    def run(self):
+    def run(self) -> None:
         for t in range(1, self.steps + 1):
             self.time += self.dt
             self.update_phases()
