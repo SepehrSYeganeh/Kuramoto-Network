@@ -3,7 +3,24 @@ from KuramotoNetwork.visualization import *
 import multiprocessing as mp
 
 
-def trajectory_no_noise_1d():
+def trajectory_1d():
+    N = 100
+    sigma = 2
+    kappa_list = [0, 0.1, 1, 5, 20, 100, 500]
+    xi = 0
+    steps = 5000
+    dt = 0.001
+    n_s = 10
+    dim = 1
+    for kappa in kappa_list:
+        kuramoto1d = KuramotoGrid1d(N, sigma, kappa, xi, steps, dt, n_s)
+        kuramoto1d.run()
+        print('simulation done')
+        animate(xi, kappa, dim)
+        print('visualize done')
+
+
+def trajectory_with_noise_1d():
     N = 100
     sigma = 2
     kappa_list = [0, 0.1, 1, 5, 20, 100, 500]
@@ -20,24 +37,7 @@ def trajectory_no_noise_1d():
         print('visualize done')
 
 
-def trajectory_noise_1d():
-    N = 100
-    sigma = 2
-    kappa_list = [0, 0.1, 1, 5, 20, 100, 500]
-    xi = 0.1
-    steps = 5000
-    dt = 0.001
-    n_s = 10
-    dim = 1
-    for kappa in kappa_list:
-        kuramoto1d = KuramotoGrid1d(N, sigma, kappa, xi, steps, dt, n_s)
-        kuramoto1d.run()
-        print('simulation done')
-        animate(xi, kappa, dim)
-        print('visualize done')
-
-
-def trajectory_no_noise_2d():
+def trajectory_2d():
     N = 100
     sigma = 2
     kappa_list = [0, 0.1, 1, 5, 20, 100, 500]
@@ -54,7 +54,7 @@ def trajectory_no_noise_2d():
         print('visualize done')
 
 
-def trajectory_noise_2d():
+def trajectory_with_noise_2d():
     N = 100
     sigma = 2
     kappa_list = [0, 0.1, 1, 5, 20, 100, 500]

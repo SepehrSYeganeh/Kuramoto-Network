@@ -1,35 +1,47 @@
-from KuramotoNetwork import datafiles
+from KuramotoNetwork import io
 import numpy as np
 
 
 class KuramotoGrid1d:
     dim = 1
 
-    def __init__(self, N: int, sigma: float, kappa: float, xi: float, steps: int, dt: float, n_s: int):
+    def __init__(self, N: int, sigma: float, kappa: float, xi: float,
+                 steps: int, dt: float, snapshot_frames: int):
+        """
+        :param N: number of oscillators
+        :param sigma: std of omega distribution
+        :param kappa: coupling strength
+        :param xi: noise strength
+        :param steps: simulation steps
+        :param dt: time step
+        :param snapshot_frames: frames between snapshots
+        """
         # initialize time
         self.steps = steps
         self.dt = dt
         self.time = 0
-        self.n_s = n_s  # snapshot steps
+        self.snapshot_frames = snapshot_frames
 
         # initialize oscillators
-        self.N = N  # number of oscillators
-        self.sigma = sigma  # std of omega dist
-        self.kappa = kappa  # coupling constant
-        self.xi = xi  # amplitude of noise
-        self.theta_arr = np.linspace(0, 2 * np.pi, self.N, endpoint=False)  # phase
+        self.N = N
+        self.sigma = sigma
+        self.kappa = kappa
+        self.xi = xi
+        self.theta_arr = np.linspace(0, 2 * np.pi, self.N, endpoint=False)
         np.random.shuffle(self.theta_arr)
-        self.omega_arr = np.random.normal(size=self.N, scale=self.sigma)  # natural frequencies
+        self.omega_arr = np.random.normal(size=self.N, scale=self.sigma)
 
         # initialize data files
-        datafiles.init_theta(self.N, self.dim)
-        datafiles.init_param(self.dim)
+        io.init_data(self.N, self.dim)
         self.update_files()
 
     #################################################
     # order parameter
     #################################################
-    def order_parameter(self):
+    def order_parameter(self) -> tuple[float, float]:
+        """
+        r * exp(i * psi) = mean(exp(i * theta_j))
+        """
         x = np.mean(np.cos(self.theta_arr))
         y = np.mean(np.sin(self.theta_arr))
         r = np.sqrt(x ** 2 + y ** 2)
@@ -39,19 +51,23 @@ class KuramotoGrid1d:
     #################################################
     # update
     #################################################
-    def update_phases(self):
+    def update_phases(self) -> None:
+        """
+        d(theta)/dt = omega + coupling + noise
+        """
         lag_left = np.roll(self.theta_arr, 1) - self.theta_arr
         lag_right = np.roll(self.theta_arr, -1) - self.theta_arr
-        coupling_arr = self.kappa * (np.sin(lag_left) + np.sin(lag_right)) * self.dt
+        coupling_term = self.kappa * (np.sin(lag_left) + np.sin(lag_right)) * self.dt
 
-        noise_arr = self.xi * np.random.normal(size=self.N, scale=np.sqrt(self.dt))
+        noise_term = self.xi * np.random.normal(size=self.N, scale=np.sqrt(self.dt))
 
-        self.theta_arr += self.omega_arr * self.dt + coupling_arr + noise_arr
+        omega_term = self.omega_arr * self.dt
 
-    def update_files(self):
-        datafiles.append_theta(self.time, self.theta_arr, self.dim)
+        self.theta_arr += omega_term + coupling_term + noise_term
+
+    def update_files(self) -> None:
         r, psi = self.order_parameter()
-        datafiles.append_param(self.time, r, psi, self.dim)
+        io.append_data(self.dim, r, psi, self.theta_arr)
 
     #################################################
     # simulation
@@ -60,7 +76,7 @@ class KuramotoGrid1d:
         for t in range(self.steps):
             self.time += self.dt
             self.update_phases()
-            if t % self.n_s == 0:
+            if t % self.snapshot_frames == 0:
                 self.update_files()
 
     #################################################
@@ -88,18 +104,27 @@ class KuramotoGrid2d:
     dim = 2
 
     def __init__(self, N: int, sigma: float, kappa: float, xi: float,
-                 steps: int, dt: float, n_s: int):
+                 steps: int, dt: float, snapshot_frames: int):
+        """
+        :param N: number of oscillators
+        :param sigma: std of omega distribution
+        :param kappa: coupling strength
+        :param xi: noise strength
+        :param steps: simulation steps
+        :param dt: time step
+        :param snapshot_frames: frames between snapshots
+        """
         # initialize time
         self.steps = steps
         self.dt = dt
         self.time = 0
-        self.n_s = n_s  # snapshot steps
+        self.snapshot_frames = snapshot_frames
 
         # initialize parameters
-        self.N = N  # number of oscillators
-        self.sigma = sigma  # std of omega dist
-        self.kappa = kappa  # coupling constant
-        self.xi = xi  # amplitude of noise
+        self.N = N
+        self.sigma = sigma
+        self.kappa = kappa
+        self.xi = xi
 
         # initialize oscillators
         self.theta_arr = np.linspace(0, 2 * np.pi, self.N, endpoint=False)  # phase
@@ -110,7 +135,7 @@ class KuramotoGrid2d:
         self.omega_arr = np.reshape(self.omega_arr, (np.sqrt(self.N).astype(int), np.sqrt(self.N).astype(int)))
 
         # initialize data files
-        datafiles.init_theta(self.N, self.dim)
+        datafiles.init_data(self.N, self.dim)
         datafiles.init_param(self.dim)
         self.update_files()
 
@@ -118,6 +143,9 @@ class KuramotoGrid2d:
     # order parameter
     #################################################
     def order_parameter(self):
+        """
+        r * exp(i * psi) = mean(exp(i * theta_j))
+        """
         x = np.mean(np.cos(self.theta_arr))
         y = np.mean(np.sin(self.theta_arr))
         r = np.sqrt(x ** 2 + y ** 2)
@@ -151,7 +179,7 @@ class KuramotoGrid2d:
         for t in range(1, self.steps + 1):
             self.time += self.dt
             self.update_phases()
-            if t % self.n_s == 0:
+            if t % self.snapshot_frames == 0:
                 self.update_files()
 
     #################################################
