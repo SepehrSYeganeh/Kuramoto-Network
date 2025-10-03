@@ -6,7 +6,7 @@ from matplotlib.animation import FuncAnimation
 
 
 def animate(xi, kappa, dim):
-    # TODO: update this part
+    # TODO: update according to new io
     data_df, constants = io.load_data(dim)
     theta = df_theta.iloc[:, 3:].to_numpy()
     x = np.cos(theta)

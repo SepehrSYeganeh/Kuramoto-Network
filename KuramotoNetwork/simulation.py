@@ -32,7 +32,8 @@ class KuramotoGrid1d:
         self.omega_arr = np.random.normal(size=self.N, scale=self.sigma)
 
         # initialize data files
-        io.init_data(self.N, self.dim, {'kappa': self.kappa, 'sigma': self.sigma, 'xi': self.xi})
+        self.filename = f"D{self.dim}-N{self.N}-K{self.kappa}-std{self.sigma}-xi{self.xi}"
+        io.init_data(self.filename, self.N)
         self.update_files()
 
     #################################################
@@ -70,7 +71,7 @@ class KuramotoGrid1d:
 
     def update_files(self) -> None:
         r, psi = self.order_parameter()
-        io.append_data(self.dim, r, psi, self.theta_arr)
+        io.append_data(self.filename, self.time, r, psi, self.theta_arr)
 
     #################################################
     # simulation
@@ -139,7 +140,8 @@ class KuramotoGrid2d:
         self.omega_arr = np.reshape(self.omega_arr, (L, L))
 
         # initialize data files
-        io.init_data(self.N, self.dim, {'kappa': self.kappa, 'sigma': self.sigma, 'xi': self.xi})
+        self.filename = f"D{self.dim}-N{self.N}-K{self.kappa}-std{self.sigma}-xi{self.xi}"
+        io.init_data(self.filename, self.N)
         self.update_files()
 
     #################################################
@@ -180,7 +182,7 @@ class KuramotoGrid2d:
 
     def update_files(self) -> None:
         r, psi = self.order_parameter()
-        io.append_data(self.dim, self.time, r, psi, self.theta_arr.flatten())
+        io.append_data(self.filename, self.time, r, psi, self.theta_arr.flatten())
 
     #################################################
     # run simulation
