@@ -1,3 +1,4 @@
 /.gitattributes
 /.idea
 /KuramotoNetwork/.idea
+/KuramotoNetwork/__pycache__
