@@ -8,7 +8,7 @@ def trajectory_1d():
     sigma = 2
     kappa_list = [0, 0.1, 1, 5, 20, 100, 500]
     xi = 0
-    steps = 5000
+    steps = 500
     dt = 0.001
     n_s = 10
     dim = 1
@@ -16,8 +16,8 @@ def trajectory_1d():
         kuramoto1d = KuramotoGrid1d(N, sigma, kappa, xi, steps, dt, n_s)
         kuramoto1d.run()
         print('simulation done')
-        animate(xi, kappa, dim)
-        print('visualize done')
+        # animate(xi, kappa, dim)
+        # print('visualize done')
 
 
 def trajectory_with_noise_1d():

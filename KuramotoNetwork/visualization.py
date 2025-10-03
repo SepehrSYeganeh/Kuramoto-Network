@@ -1,3 +1,4 @@
+from KuramotoNetwork import io
 import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
@@ -5,9 +6,9 @@ from matplotlib.animation import FuncAnimation
 
 
 def animate(xi, kappa, dim):
-    df_theta = pd.read_csv('data/theta-' + str(dim) + 'd.csv')
-    df_param = pd.read_csv('data/param-' + str(dim) + 'd.csv')
-    theta = df_theta.iloc[:, 1:].to_numpy()
+    # TODO: update this part
+    data_df, constants = io.load_data(dim)
+    theta = df_theta.iloc[:, 3:].to_numpy()
     x = np.cos(theta)
     y = np.sin(theta)
     r = df_param.iloc[:, 1].to_numpy()

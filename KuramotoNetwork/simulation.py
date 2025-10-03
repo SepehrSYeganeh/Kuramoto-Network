@@ -32,7 +32,7 @@ class KuramotoGrid1d:
         self.omega_arr = np.random.normal(size=self.N, scale=self.sigma)
 
         # initialize data files
-        io.init_data(self.N, self.dim)
+        io.init_data(self.N, self.dim, {'kappa': self.kappa, 'sigma': self.sigma, 'xi': self.xi})
         self.update_files()
 
     #################################################
@@ -139,7 +139,7 @@ class KuramotoGrid2d:
         self.omega_arr = np.reshape(self.omega_arr, (L, L))
 
         # initialize data files
-        io.init_data(self.N, self.dim)
+        io.init_data(self.N, self.dim, {'kappa': self.kappa, 'sigma': self.sigma, 'xi': self.xi})
         self.update_files()
 
     #################################################
