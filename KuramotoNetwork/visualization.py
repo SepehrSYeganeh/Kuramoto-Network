@@ -5,22 +5,22 @@ from matplotlib import pyplot as plt
 from matplotlib.animation import FuncAnimation
 
 
-def animate(dim: int, N: int, kappa: float, sigma: float, xi: float):
+def animate(args):
+    dim, N, kappa, sigma, xi = args
     filename = io.make_filename(dim, N, kappa, sigma, xi)
     df = io.load_data(filename)
-    data_df, constants = io.load_data(dim)
-    theta = df_theta.iloc[:, 3:].to_numpy()
+    theta = df.iloc[:, 3:].to_numpy()
+    r = df.iloc[:, 1].to_numpy()
+    psi = df.iloc[:, 2].to_numpy()
+    time = df.iloc[:, 0].to_numpy()
+    frames = len(time)
+
     x = np.cos(theta)
     y = np.sin(theta)
-    r = df_param.iloc[:, 1].to_numpy()
-    psi = df_param.iloc[:, 2].to_numpy()
     xr = r * np.cos(psi)
     yr = r * np.sin(psi)
     X = np.column_stack((x, xr))
     Y = np.column_stack((y, yr))
-    time = df_theta.iloc[:, 0].to_numpy()
-    frames = len(time)
-    N = theta.shape[1]
 
     # Setup figure
     fig, ax = plt.subplots(figsize=(8, 8))
@@ -32,7 +32,7 @@ def animate(dim: int, N: int, kappa: float, sigma: float, xi: float):
     ax.add_artist(circle)
     line, = ax.plot([], [], color='red', lw=1.5)
     title = ax.set_title(f'time = {time[0]}')
-    fig.suptitle(f'kappa = {kappa}, xi = {xi}', fontsize=14)
+    fig.suptitle(f'dim={dim}, kappa={kappa:.2f}, xi={xi:.2f}', fontsize=14)
 
     colors = plt.cm.viridis(np.linspace(0, 1, N))
     colors = np.vstack((colors, np.array([0, 0, 0, 1])))
@@ -53,7 +53,10 @@ def animate(dim: int, N: int, kappa: float, sigma: float, xi: float):
         blit=True  # faster redraw
     )
 
-    ani.save('fig/trajectory-' + str(dim) + 'd-k' + str(kappa) + '-xi' + str(xi) + '.gif', writer='pillow', fps=5)
+    ani.save(f"fig/trajectory/{filename }.gif",
+             writer='pillow', fps=5)
+
+    print(f"animation done for kappa={kappa} and xi={xi}")
 
 
 def plot_final_r(kappa_arr, r_arr, dim, xi):

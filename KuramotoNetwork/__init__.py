@@ -1,5 +1,5 @@
 from KuramotoNetwork.simulation import *
-from KuramotoNetwork.visualization import *
+from KuramotoNetwork import visualization
 import numpy as np
 from itertools import product
 import multiprocessing as mp
@@ -55,8 +55,21 @@ def generate_data(dim: int,
     print("All simulations finished")
 
 
-def animate_simulations():
-    pass
+def animate_simulations(dim: int,
+                        N: int,
+                        sigma: float,
+                        kappa_arr: np.ndarray,
+                        xi_arr: np.ndarray
+                        ) -> None:
+    args_list = [
+        (dim, N, kappa, sigma, xi)
+        for kappa, xi in product(kappa_arr, xi_arr)
+    ]
+
+    with mp.Pool(processes=mp.cpu_count()) as pool:
+        pool.map(visualization.animate, args_list)
+
+    print("All animations finished")
 
 
 def _simulate_single_run_1d(args):
