@@ -2,7 +2,7 @@ from KuramotoNetwork import io
 import numpy as np
 
 
-class KuramotoGrid1d:
+class KuramotoGrid1D:
     dim = 1
 
     def __init__(self, N: int, sigma: float, kappa: float, xi: float,
@@ -13,7 +13,7 @@ class KuramotoGrid1d:
         :param kappa: coupling strength
         :param xi: noise strength
         :param steps: simulation steps
-        :param dt: time step
+        :param dt: time increment
         :param snapshot_frames: frames between snapshots
         """
         # initialize time
@@ -32,7 +32,7 @@ class KuramotoGrid1d:
         self.omega_arr = np.random.normal(size=self.N, scale=self.sigma)
 
         # initialize data files
-        self.filename = f"D{self.dim}-N{self.N}-K{self.kappa}-std{self.sigma}-xi{self.xi}"
+        self.filename = io.make_filename(self.dim, self.N, self.kappa, self.sigma, self.xi)
         io.init_data(self.filename, self.N)
         self.update_files()
 
@@ -104,7 +104,7 @@ class KuramotoGrid1d:
 
 ###################################################################################
 ###################################################################################
-class KuramotoGrid2d:
+class KuramotoGrid2D:
     dim = 2
 
     def __init__(self, L: int, sigma: float, kappa: float, xi: float,
@@ -140,7 +140,7 @@ class KuramotoGrid2d:
         self.omega_arr = np.reshape(self.omega_arr, (L, L))
 
         # initialize data files
-        self.filename = f"D{self.dim}-N{self.N}-K{self.kappa}-std{self.sigma}-xi{self.xi}"
+        self.filename = io.make_filename(self.dim, self.N, self.kappa, self.sigma, self.xi)
         io.init_data(self.filename, self.N)
         self.update_files()
 

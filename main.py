@@ -2,10 +2,16 @@ from KuramotoNetwork import *
 
 
 def main():
-    trajectory_1d()
-    # trajectory_noise_1d()
-    # trajectory_no_noise_2d()
-    # trajectory_noise_2d()
+    dim = 1
+    N = 100
+    sigma = 2
+    kappa_arr = np.linspace(0, 7, 8)
+    xi_arr = np.linspace(0, 1, 8)
+    steps = 500
+    dt = 0.001
+    snapshot_frames = 10
+
+    generate_data(dim, N, sigma, kappa_arr, xi_arr, steps, dt, snapshot_frames)
     # final_r_no_noise_1d()
     # final_r_no_noise_2d()
     # critical_kappa_1d()

@@ -1,79 +1,67 @@
 from KuramotoNetwork.simulation import *
 from KuramotoNetwork.visualization import *
+import numpy as np
+from itertools import product
 import multiprocessing as mp
 
 
-def trajectory_1d():
-    N = 100
-    sigma = 2
-    kappa_list = [0, 0.1, 1, 5, 20, 100, 500]
-    xi = 0
-    steps = 500
-    dt = 0.001
-    n_s = 10
-    dim = 1
-    for kappa in kappa_list:
-        kuramoto1d = KuramotoGrid1d(N, sigma, kappa, xi, steps, dt, n_s)
-        kuramoto1d.run()
-        print('simulation done')
-        # animate(xi, kappa, dim)
-        # print('visualize done')
+def _simulation1D(args) -> None:
+    """run a single simulation for 1-dimensional grid"""
+    N, sigma, kappa, xi, steps, dt, snapshot_frames = args
+    kuramoto1d = KuramotoGrid1D(N, sigma, kappa, xi, steps, dt, snapshot_frames)
+    kuramoto1d.run()
+    print(f"simulation done for kappa={kappa} and xi={xi}")
 
 
-def trajectory_with_noise_1d():
-    N = 100
-    sigma = 2
-    kappa_list = [0, 0.1, 1, 5, 20, 100, 500]
-    xi = 0.1
-    steps = 5000
-    dt = 0.001
-    n_s = 10
-    dim = 1
-    for kappa in kappa_list:
-        kuramoto1d = KuramotoGrid1d(N, sigma, kappa, xi, steps, dt, n_s)
-        kuramoto1d.run()
-        print('simulation done')
-        animate(xi, kappa, dim)
-        print('visualize done')
+def _simulation2D(args) -> None:
+    """run a single simulation for 2-dimensional grid"""
+    N, sigma, kappa, xi, steps, dt, snapshot_frames = args
+    kuramoto2d = KuramotoGrid2D(N, sigma, kappa, xi, steps, dt, snapshot_frames)
+    kuramoto2d.run()
+    print(f"simulation done for kappa={kappa}")
 
 
-def trajectory_2d():
-    N = 100
-    sigma = 2
-    kappa_list = [0, 0.1, 1, 5, 20, 100, 500]
-    xi = 0.1
-    steps = 5000
-    dt = 0.001
-    n_s = 10
-    dim = 2
-    for kappa in kappa_list:
-        kuramoto2d = KuramotoGrid2d(N, sigma, kappa, xi, steps, dt, n_s)
-        kuramoto2d.run()
-        print('simulation done')
-        animate(xi, kappa, dim)
-        print('visualize done')
+def generate_data(dim: int,
+                  N: int,
+                  sigma: float,
+                  kappa_arr: np.ndarray,
+                  xi_arr: np.ndarray,
+                  steps: int,
+                  dt: float,
+                  snapshot_frames: int
+                  ) -> None:
+    """
+    :param dim: dimension
+    :param N: number of oscillators
+    :param sigma: std of omega distribution
+    :param kappa_arr: coupling strength
+    :param xi_arr: noise strength
+    :param steps: number of simulation steps
+    :param dt: time increment
+    :param snapshot_frames: frames between snapshots
+    generates data for given parameters
+    """
+    args_list = [
+        (N, sigma, kappa, xi, steps, dt, snapshot_frames)
+        for kappa, xi in product(kappa_arr, xi_arr)
+    ]
+
+    with mp.Pool(processes=mp.cpu_count()) as pool:
+        if dim == 1:
+            pool.map(_simulation1D, args_list)
+        elif dim == 2:
+            pool.map(_simulation2D, args_list)
+
+    print("All simulations finished")
 
 
-def trajectory_with_noise_2d():
-    N = 100
-    sigma = 2
-    kappa_list = [0, 0.1, 1, 5, 20, 100, 500]
-    xi = 0.1
-    steps = 5000
-    dt = 0.001
-    n_s = 10
-    dim = 2
-    for kappa in kappa_list:
-        kuramoto2d = KuramotoGrid2d(N, sigma, kappa, xi, steps, dt, n_s)
-        kuramoto2d.run()
-        print('simulation done')
-        animate(xi, kappa, dim)
-        print('visualize done')
+def animate_simulations():
+    pass
 
 
 def _simulate_single_run_1d(args):
     N, sigma, kappa, xi, transient_steps, dt, n_s, steady_steps = args
-    kuramoto1d = KuramotoGrid1d(N, sigma, kappa, xi, transient_steps, dt, n_s)
+    kuramoto1d = KuramotoGrid1D(N, sigma, kappa, xi, transient_steps, dt, n_s)
     return kuramoto1d.final_r(transient_steps, steady_steps)
 
 
@@ -107,7 +95,7 @@ def final_r_no_noise_1d():
 
 def _simulate_single_run_2d(args):
     N, sigma, kappa, xi, transient_steps, dt, n_s, steady_steps = args
-    kuramoto2d = KuramotoGrid2d(N, sigma, kappa, xi, transient_steps, dt, n_s)
+    kuramoto2d = KuramotoGrid2D(N, sigma, kappa, xi, transient_steps, dt, n_s)
     return kuramoto2d.final_r(transient_steps, steady_steps)
 
 

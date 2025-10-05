@@ -5,8 +5,9 @@ from matplotlib import pyplot as plt
 from matplotlib.animation import FuncAnimation
 
 
-def animate(xi, kappa, dim):
-    # TODO: update according to new io
+def animate(dim: int, N: int, kappa: float, sigma: float, xi: float):
+    filename = io.make_filename(dim, N, kappa, sigma, xi)
+    df = io.load_data(filename)
     data_df, constants = io.load_data(dim)
     theta = df_theta.iloc[:, 3:].to_numpy()
     x = np.cos(theta)
