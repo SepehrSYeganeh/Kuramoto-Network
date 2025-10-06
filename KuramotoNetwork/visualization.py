@@ -74,13 +74,9 @@ def plot_r_time(args):
     print(f"plot done for kappa={kappa} and xi={xi}")
 
 
-def plot_final_r(kappa_arr, r_arr, dim, xi):
-    plt.scatter(kappa_arr, r_arr)
-    plt.xlabel(r'$\kappa$')
-    plt.ylabel('$r$')
-    plt.title(f'{dim} dimensional network')
-    plt.savefig(f'fig/final-r-xi{xi}-{dim}d.png', dpi=300)
-    plt.show()
+def plot_r_infty_kappa(args):
+    # TODO: plot R_infty(kappa,xi)
+    dim, N, kappa, sigma, xi, steady_state = args
 
 
 def plot_critical_kappa(kappa_arr, r_arr, dim, xi):
@@ -89,13 +85,4 @@ def plot_critical_kappa(kappa_arr, r_arr, dim, xi):
     plt.ylabel('$r$')
     plt.title(f'{dim} dimensional network')
     plt.savefig(f'fig/critical-kappa-xi{xi}-{dim}d.png', dpi=300)
-    plt.show()
-
-
-def plot_final_r_noise(xi_arr, r_arr, dim, kappa):
-    plt.scatter(xi_arr, r_arr)
-    plt.xlabel(r'$\xi$')
-    plt.ylabel('$r$')
-    plt.title(f'{dim} dimensional network, $\\kappa$ = {kappa}')
-    plt.savefig(f'fig/final-r-kappa{kappa}-{dim}d.png', dpi=300)
     plt.show()

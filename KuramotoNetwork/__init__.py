@@ -89,72 +89,23 @@ def r_in_time(dim: int,
     print("All plots finished")
 
 
-def _simulate_single_run_1d(args):
-    N, sigma, kappa, xi, transient_steps, dt, n_s, steady_steps = args
-    kuramoto1d = KuramotoGrid1D(N, sigma, kappa, xi, transient_steps, dt, n_s)
-    return kuramoto1d.final_r(transient_steps, steady_steps)
-
-
-def final_r_no_noise_1d():
-    N = 100
-    sigma = 2
-    kappa_arr = np.arange(201)
-    xi = 0
-    transient_steps = 9000
-    steady_steps = 1000
-    dt = 0.001
-    n_s = 0
-    dim = 1
-    ensemble = 100
-    final_r_arr = np.zeros(len(kappa_arr))
+def r_infty_kappa(dim: int,
+                  N: int,
+                  sigma: float,
+                  kappa_arr: np.ndarray,
+                  xi_arr: np.ndarray,
+                  steady_state: int  # number of steady state steps
+                  ) -> None:
+    # TODO: first make r = f(kappa,xi) then plot
+    args_list = [
+        (dim, N, kappa, sigma, xi, steady_state)
+        for kappa, xi in product(kappa_arr, xi_arr)
+    ]
 
     with mp.Pool(processes=mp.cpu_count()) as pool:
-        for i, kappa in enumerate(kappa_arr):
-            args_list = [
-                (N, sigma, kappa, xi, transient_steps, dt, n_s, steady_steps)
-                for _ in range(ensemble)
-            ]
-            r_arr = pool.map(_simulate_single_run_1d, args_list)
-            r_arr = np.array(r_arr)
-            final_r_arr[i] = np.mean(r_arr)
+        pool.map(visualization.plot_r_infty_kappa, args_list)
 
-    print('simulation done')
-    plot_final_r(kappa_arr, final_r_arr, dim, xi)
-    print('visualization done')
-
-
-def _simulate_single_run_2d(args):
-    N, sigma, kappa, xi, transient_steps, dt, n_s, steady_steps = args
-    kuramoto2d = KuramotoGrid2D(N, sigma, kappa, xi, transient_steps, dt, n_s)
-    return kuramoto2d.final_r(transient_steps, steady_steps)
-
-
-def final_r_no_noise_2d():
-    N = 100
-    sigma = 2
-    kappa_arr = np.arange(0, 401, 5)
-    xi = 0
-    transient_steps = 9000
-    steady_steps = 1000
-    dt = 0.001
-    n_s = 0
-    dim = 2
-    ensemble = 100
-    final_r_arr = np.zeros(len(kappa_arr))
-
-    with mp.Pool(processes=mp.cpu_count()) as pool:
-        for i, kappa in enumerate(kappa_arr):
-            args_list = [
-                (N, sigma, kappa, xi, transient_steps, dt, n_s, steady_steps)
-                for _ in range(ensemble)
-            ]
-            r_arr = pool.map(_simulate_single_run_2d, args_list)
-            r_arr = np.array(r_arr)
-            final_r_arr[i] = np.mean(r_arr)
-
-    print('simulation done')
-    plot_final_r(kappa_arr, final_r_arr, dim, xi)
-    print('visualization done')
+    print("All plots finished")
 
 
 def critical_kappa_1d():

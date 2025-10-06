@@ -83,24 +83,6 @@ class KuramotoGrid1D:
             if t % self.snapshot_frames == 0:
                 self.update_files()
 
-    #################################################
-    # final_r
-    #################################################
-    def final_r(self, transient_steps, steady_state) -> float:
-        # running until system relaxes
-        for t in range(transient_steps):
-            self.time += self.dt
-            self.update_phases()
-
-        # system is relaxed
-        r_arr = np.zeros(steady_state)
-        for t in range(steady_state):
-            self.time += self.dt
-            self.update_phases()
-            r_arr[t] = self.order_parameter()[0]
-
-        return np.mean(r_arr)
-
 
 ###################################################################################
 ###################################################################################
@@ -193,21 +175,3 @@ class KuramotoGrid2D:
             self.update_phases()
             if t % self.snapshot_frames == 0:
                 self.update_files()
-
-    #################################################
-    # final_r
-    #################################################
-    def final_r(self, transient_steps, steady_state):
-        # running until system relaxes
-        for t in range(transient_steps):
-            self.time += self.dt
-            self.update_phases()
-
-        # system is relaxed
-        r_arr = np.zeros(steady_state)
-        for t in range(steady_state):
-            self.time += self.dt
-            self.update_phases()
-            r_arr[t] = self.order_parameter()[0]
-
-        return np.mean(r_arr)
