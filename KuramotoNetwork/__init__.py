@@ -72,6 +72,23 @@ def animate_simulations(dim: int,
     print("All animations finished")
 
 
+def r_in_time(dim: int,
+              N: int,
+              sigma: float,
+              kappa_arr: np.ndarray,
+              xi_arr: np.ndarray
+              ) -> None:
+    args_list = [
+        (dim, N, kappa, sigma, xi)
+        for kappa, xi in product(kappa_arr, xi_arr)
+    ]
+
+    with mp.Pool(processes=mp.cpu_count()) as pool:
+        pool.map(visualization.plot_r_time, args_list)
+
+    print("All plots finished")
+
+
 def _simulate_single_run_1d(args):
     N, sigma, kappa, xi, transient_steps, dt, n_s, steady_steps = args
     kuramoto1d = KuramotoGrid1D(N, sigma, kappa, xi, transient_steps, dt, n_s)

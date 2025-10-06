@@ -53,10 +53,25 @@ def animate(args):
         blit=True  # faster redraw
     )
 
-    ani.save(f"fig/trajectory/{filename }.gif",
+    ani.save(f"fig/trajectory/{filename}.gif",
              writer='pillow', fps=5)
 
     print(f"animation done for kappa={kappa} and xi={xi}")
+
+
+def plot_r_time(args):
+    dim, N, kappa, sigma, xi = args
+    filename = io.make_filename(dim, N, kappa, sigma, xi)
+    df = io.load_data(filename)
+
+    plt.plot(df['t'], df['r'])
+    plt.xlabel('time')
+    plt.ylabel('r')
+    plt.title(f"dim={dim}, kappa={kappa:.2f}, xi={xi:.2f}")
+    plt.savefig(f"fig/r-time/{filename}.png", dpi=300)
+    plt.close()
+
+    print(f"plot done for kappa={kappa} and xi={xi}")
 
 
 def plot_final_r(kappa_arr, r_arr, dim, xi):
