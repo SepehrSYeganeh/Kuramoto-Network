@@ -3,8 +3,8 @@ import csv
 import pandas as pd
 
 
-def make_filename(dim: int, N: int, kappa: float, sigma: float, xi: float):
-    return f"D{dim}-N{N}-K{kappa:.3f}-std{sigma:.3f}-xi{xi:.3f}"
+def make_filename(dim: int, N: int, kappa: float, sigma: float, xi: float, T: int):
+    return f"D{dim}-N{N}-K{kappa:.3f}-std{sigma:.3f}-xi{xi:.3f}-T{T}"
 
 
 def init_data(filename: str, N: int) -> None:

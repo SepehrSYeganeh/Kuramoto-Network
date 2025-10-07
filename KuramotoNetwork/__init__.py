@@ -7,28 +7,30 @@ import multiprocessing as mp
 
 def _simulation1D(args) -> None:
     """run a single simulation for 1-dimensional grid"""
-    N, sigma, kappa, xi, steps, dt, snapshot_frames = args
-    kuramoto1d = KuramotoGrid1D(N, sigma, kappa, xi, steps, dt, snapshot_frames)
+    N, sigma, kappa, xi, steps, dt, snapshot_frames, init_theta, init_omega = args
+    kuramoto1d = KuramotoGrid1D(N, sigma, kappa, xi, steps, dt, snapshot_frames, init_theta, init_omega)
     kuramoto1d.run()
     print(f"simulation done for kappa={kappa} and xi={xi}")
 
 
 def _simulation2D(args) -> None:
     """run a single simulation for 2-dimensional grid"""
-    N, sigma, kappa, xi, steps, dt, snapshot_frames = args
-    kuramoto2d = KuramotoGrid2D(N, sigma, kappa, xi, steps, dt, snapshot_frames)
+    N, sigma, kappa, xi, steps, dt, snapshot_frames, init_theta, init_omega = args
+    kuramoto2d = KuramotoGrid2D(N, sigma, kappa, xi, steps, dt, snapshot_frames, init_theta, init_omega)
     kuramoto2d.run()
     print(f"simulation done for kappa={kappa}")
 
 
 def generate_data(dim: int,
-                  N: int,
+                  N: int,  # L for 2d dimension
                   sigma: float,
                   kappa_arr: np.ndarray,
                   xi_arr: np.ndarray,
                   steps: int,
                   dt: float,
-                  snapshot_frames: int
+                  snapshot_frames: int,
+                  init_theta: np.ndarray,
+                  init_omega: np.ndarray
                   ) -> None:
     """
     :param dim: dimension
@@ -42,7 +44,7 @@ def generate_data(dim: int,
     generates data for given parameters
     """
     args_list = [
-        (N, sigma, kappa, xi, steps, dt, snapshot_frames)
+        (N, sigma, kappa, xi, steps, dt, snapshot_frames, init_theta, init_omega)
         for kappa, xi in product(kappa_arr, xi_arr)
     ]
 
@@ -59,10 +61,11 @@ def animate_simulations(dim: int,
                         N: int,
                         sigma: float,
                         kappa_arr: np.ndarray,
-                        xi_arr: np.ndarray
+                        xi_arr: np.ndarray,
+                        steps: int
                         ) -> None:
     args_list = [
-        (dim, N, kappa, sigma, xi)
+        (dim, N, kappa, sigma, xi, steps)
         for kappa, xi in product(kappa_arr, xi_arr)
     ]
 
@@ -76,10 +79,11 @@ def r_in_time(dim: int,
               N: int,
               sigma: float,
               kappa_arr: np.ndarray,
-              xi_arr: np.ndarray
+              xi_arr: np.ndarray,
+              steps: int
               ) -> None:
     args_list = [
-        (dim, N, kappa, sigma, xi)
+        (dim, N, kappa, sigma, xi, steps)
         for kappa, xi in product(kappa_arr, xi_arr)
     ]
 

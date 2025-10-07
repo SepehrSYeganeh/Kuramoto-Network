@@ -6,8 +6,8 @@ from matplotlib.animation import FuncAnimation
 
 
 def animate(args):
-    dim, N, kappa, sigma, xi = args
-    filename = io.make_filename(dim, N, kappa, sigma, xi)
+    dim, N, kappa, sigma, xi, steps = args
+    filename = io.make_filename(dim, N, kappa, sigma, xi, steps)
     df = io.load_data(filename)
     theta = df.iloc[:, 3:].to_numpy()
     r = df.iloc[:, 1].to_numpy()
@@ -53,15 +53,15 @@ def animate(args):
         blit=True  # faster redraw
     )
 
-    ani.save(f"fig/trajectory/{filename}.gif",
-             writer='pillow', fps=5)
+    ani.save(f"fig/animation/{filename}.gif",
+             writer='pillow', fps=15)
 
     print(f"animation done for kappa={kappa} and xi={xi}")
 
 
 def plot_r_time(args):
-    dim, N, kappa, sigma, xi = args
-    filename = io.make_filename(dim, N, kappa, sigma, xi)
+    dim, N, kappa, sigma, xi, steps = args
+    filename = io.make_filename(dim, N, kappa, sigma, xi, steps)
     df = io.load_data(filename)
 
     plt.plot(df['t'], df['r'])
