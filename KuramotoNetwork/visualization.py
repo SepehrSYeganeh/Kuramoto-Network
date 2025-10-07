@@ -6,7 +6,7 @@ from matplotlib.animation import FuncAnimation
 import os
 
 
-def animate(args):
+def animate(args) -> None:
     anim_path, data_path, dim, N, kappa, sigma, xi, steps = args
     filename = io.make_filename(dim, N, kappa, sigma, xi, steps)
     df = io.load_data(data_path, filename)
@@ -61,7 +61,7 @@ def animate(args):
     print(f"animation done for kappa={kappa} and xi={xi}")
 
 
-def plot_r_time(args):
+def plot_r_time(args) -> None:
     rt_path, data_path, dim, N, kappa, sigma, xi, steps = args
     filename = io.make_filename(dim, N, kappa, sigma, xi, steps)
     df = io.load_data(data_path, filename)
@@ -76,9 +76,10 @@ def plot_r_time(args):
     print(f"plot done for kappa={kappa} and xi={xi}")
 
 
-def plot_r_infty_kappa(args):
-    # TODO: plot R_infty(kappa,xi)
-    dim, N, kappa, sigma, xi, steady_state = args
+def plot_r_infty_kappa(rk_path: os.PathLike, results: np.ndarray) -> None:
+    # TODO: only this
+    print(rk_path)
+    print(results)
 
 
 def plot_critical_kappa(kappa_arr, r_arr, dim, xi):

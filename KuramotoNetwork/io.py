@@ -49,3 +49,9 @@ def init_rt_directory(fig_path: os.PathLike) -> os.PathLike:
     PATH = os.path.join(fig_path, "r-time")
     os.makedirs(PATH, exist_ok=True)
     return PATH
+
+
+def init_rk_directory(fig_path: os.PathLike) -> os.PathLike:
+    PATH = os.path.join(fig_path, "r-kappa")
+    os.makedirs(PATH, exist_ok=True)
+    return PATH

@@ -51,9 +51,9 @@ def main():
 
     # animate_simulations(fig_path, data_path, dim, N, sigma, kappa_arr, xi_arr, steps)
 
-    r_in_time(fig_path, data_path, dim, N, sigma, kappa_arr, xi_arr, steps)
+    # r_in_time(fig_path, data_path, dim, N, sigma, kappa_arr, xi_arr, steps)
 
-    # r_infty_kappa()
+    r_infty_kappa(fig_path, data_path, dim, N, sigma, kappa_arr, xi_arr, steps)
 
 
 if __name__ == '__main__':

@@ -1,4 +1,5 @@
 from KuramotoNetwork.simulation import *
+from KuramotoNetwork import io
 from KuramotoNetwork import visualization
 import numpy as np
 from itertools import product
@@ -51,6 +52,7 @@ def generate_data(data_path: str,
     :param snapshot_frames: frames between snapshots
     generates data for given parameters
     """
+
     args_list = [
         (data_path,
          N, sigma, kappa, xi,
@@ -161,6 +163,38 @@ def generate_relaxed_data(data_path: str,
             pool.map(_simulation2D_relaxed, args_list)
 
     print("All simulations finished")
+
+
+def _calc_r_infty(args):
+    data_path, dim, N, kappa, sigma, xi, steps = args
+    filename = io.make_filename(dim, N, kappa, sigma, xi, steps)
+    df = io.load_data(data_path, filename)
+    return kappa, xi, df['r'].mean()
+
+
+def r_infty_kappa(fig_path: str,
+                  data_path: str,
+                  dim: int,
+                  N: int,
+                  sigma: float,
+                  kappa_arr: np.ndarray,
+                  xi_arr: np.ndarray,
+                  steps: int
+                  ) -> None:
+    args_list = [
+        (data_path, dim, N, kappa, sigma, xi, steps)
+        for kappa, xi in product(kappa_arr, xi_arr)
+    ]
+
+    with mp.Pool(processes=mp.cpu_count()) as pool:
+        results = pool.map(_calc_r_infty, args_list)
+
+    results = np.array(results).T
+    rk_path = io.init_rk_directory(fig_path)
+
+    visualization.plot_r_infty_kappa(rk_path, results)
+
+    print("plot finished")
 
 
 def critical_kappa_1d():
