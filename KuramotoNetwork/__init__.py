@@ -27,7 +27,7 @@ def _simulation2D(args) -> None:
     print(f"simulation done for kappa={kappa}")
 
 
-def generate_data(path: str,
+def generate_data(data_path: str,
                   dim: int,
                   N: int,  # L for 2d dimension
                   sigma: float,
@@ -40,7 +40,7 @@ def generate_data(path: str,
                   init_omega: np.ndarray
                   ) -> None:
     """
-    :param path: simulation path
+    :param data_path: simulation path
     :param dim: dimension
     :param N: number of oscillators
     :param sigma: std of omega distribution
@@ -52,7 +52,7 @@ def generate_data(path: str,
     generates data for given parameters
     """
     args_list = [
-        (path,
+        (data_path,
          N, sigma, kappa, xi,
          steps, dt, snapshot_frames,
          init_theta, init_omega)
@@ -68,15 +68,19 @@ def generate_data(path: str,
     print("All simulations finished")
 
 
-def animate_simulations(dim: int,
+def animate_simulations(fig_path: str,
+                        data_path: str,
+                        dim: int,
                         N: int,
                         sigma: float,
                         kappa_arr: np.ndarray,
                         xi_arr: np.ndarray,
                         steps: int
                         ) -> None:
+    anim_path = io.init_anim_directory(fig_path)
+
     args_list = [
-        (dim, N, kappa, sigma, xi, steps)
+        (anim_path, data_path, dim, N, kappa, sigma, xi, steps)
         for kappa, xi in product(kappa_arr, xi_arr)
     ]
 

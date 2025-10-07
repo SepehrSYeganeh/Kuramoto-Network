@@ -3,12 +3,14 @@ import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
 from matplotlib.animation import FuncAnimation
+import os
 
 
 def animate(args):
-    dim, N, kappa, sigma, xi, steps = args
+    anim_path, data_path, dim, N, kappa, sigma, xi, steps = args
     filename = io.make_filename(dim, N, kappa, sigma, xi, steps)
-    df = io.load_data(filename)
+    df = io.load_data(data_path, filename)
+
     theta = df.iloc[:, 3:].to_numpy()
     r = df.iloc[:, 1].to_numpy()
     psi = df.iloc[:, 2].to_numpy()
@@ -49,11 +51,11 @@ def animate(args):
         fig,
         update,
         frames=frames,
-        interval=20,  # milliseconds between frames
-        blit=True  # faster redraw
+        interval=20,
+        blit=True
     )
 
-    ani.save(f"fig/animation/{filename}.gif",
+    ani.save(os.path.join(anim_path, f"{filename}.gif"),
              writer='pillow', fps=15)
 
     print(f"animation done for kappa={kappa} and xi={xi}")

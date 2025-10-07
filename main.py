@@ -4,26 +4,42 @@ import numpy as np
 
 
 def main():
-    name = "test0"
-    path = io.init_simulation_directory(name)
+    name = "anim-2D"
+    data_path, fig_path = io.init_simulation_directory(name)
     dim = 2
     L = 10
     N = 100
     sigma = 2
-    kappa_arr = np.linspace(0, 15, 16)
-    xi_arr = np.array([0])
-    steps = 3_000
-    dt = 0.001
-    snapshot_frames = 10
+
+    # 1D init
+    # init_theta = initialize_theta_1D(N)
+    # init_omega = initialize_Normal_omega_1D(N, sigma)
+
+    # 2D init
     init_theta = initialize_theta_2D(L)
     init_omega = initialize_Normal_omega_2D(L, sigma)
-    steady_state = int(steps / 10)
 
-    generate_data(path, dim,
-                  L, sigma, kappa_arr, xi_arr,
-                  steps, dt, snapshot_frames,
-                  init_theta, init_omega)
-    # animate_simulations(dim, N, sigma, kappa_arr, xi_arr, steps)
+    kappa_arr = np.linspace(0, 15, 16)
+    xi_arr = np.array([0])
+    steps = 5_000
+    steady_state = int(steps / 10)
+    dt = 0.001
+    snapshot_frames = 10
+
+    # 1D
+    # generate_data(data_path, dim,
+    #               N, sigma, kappa_arr, xi_arr,
+    #               steps, dt, snapshot_frames,
+    #               init_theta, init_omega)
+
+    # 2D
+    # generate_data(data_path, dim,
+    #               L, sigma, kappa_arr, xi_arr,
+    #               steps, dt, snapshot_frames,
+    #               init_theta, init_omega)
+
+    animate_simulations(fig_path, data_path, dim, N, sigma, kappa_arr, xi_arr, steps)
+
     # r_in_time(dim, N, sigma, kappa_arr, xi_arr, steps)
     # r_infty_kappa()
 
