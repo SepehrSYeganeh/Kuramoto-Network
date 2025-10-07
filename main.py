@@ -3,7 +3,7 @@ import numpy as np
 
 
 def main():
-    dim = 1
+    dim = 2
     L = 10
     N = 100
     sigma = 2
@@ -19,7 +19,7 @@ def main():
 
     # generate_data(dim, N, sigma, kappa_arr, xi_arr, steps, dt, snapshot_frames, init_theta, init_omega)
     # animate_simulations(dim, N, sigma, kappa_arr, xi_arr, steps)
-    # r_in_time(dim, N, sigma, kappa_arr, xi_arr, steps)
+    r_in_time(dim, N, sigma, kappa_arr, xi_arr, steps)
     # r_infty_kappa()
 
 
