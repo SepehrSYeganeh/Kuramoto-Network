@@ -2,3 +2,4 @@
 /.idea
 /KuramotoNetwork/.idea
 /KuramotoNetwork/__pycache__
+**/data/
