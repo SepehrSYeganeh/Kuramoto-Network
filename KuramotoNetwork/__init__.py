@@ -7,21 +7,28 @@ import multiprocessing as mp
 
 def _simulation1D(args) -> None:
     """run a single simulation for 1-dimensional grid"""
-    N, sigma, kappa, xi, steps, dt, snapshot_frames, init_theta, init_omega = args
-    kuramoto1d = KuramotoGrid1D(N, sigma, kappa, xi, steps, dt, snapshot_frames, init_theta, init_omega)
+    path, N, sigma, kappa, xi, steps, dt, snapshot_frames, init_theta, init_omega = args
+    kuramoto1d = KuramotoGrid1D(path,
+                                N, sigma, kappa, xi,
+                                steps, dt, snapshot_frames,
+                                init_theta, init_omega)
     kuramoto1d.run()
     print(f"simulation done for kappa={kappa} and xi={xi}")
 
 
 def _simulation2D(args) -> None:
     """run a single simulation for 2-dimensional grid"""
-    N, sigma, kappa, xi, steps, dt, snapshot_frames, init_theta, init_omega = args
-    kuramoto2d = KuramotoGrid2D(N, sigma, kappa, xi, steps, dt, snapshot_frames, init_theta, init_omega)
+    path, N, sigma, kappa, xi, steps, dt, snapshot_frames, init_theta, init_omega = args
+    kuramoto2d = KuramotoGrid2D(path,
+                                N, sigma, kappa, xi,
+                                steps, dt, snapshot_frames,
+                                init_theta, init_omega)
     kuramoto2d.run()
     print(f"simulation done for kappa={kappa}")
 
 
-def generate_data(dim: int,
+def generate_data(path: str,
+                  dim: int,
                   N: int,  # L for 2d dimension
                   sigma: float,
                   kappa_arr: np.ndarray,
@@ -33,6 +40,7 @@ def generate_data(dim: int,
                   init_omega: np.ndarray
                   ) -> None:
     """
+    :param path: simulation path
     :param dim: dimension
     :param N: number of oscillators
     :param sigma: std of omega distribution
@@ -44,7 +52,10 @@ def generate_data(dim: int,
     generates data for given parameters
     """
     args_list = [
-        (N, sigma, kappa, xi, steps, dt, snapshot_frames, init_theta, init_omega)
+        (path,
+         N, sigma, kappa, xi,
+         steps, dt, snapshot_frames,
+         init_theta, init_omega)
         for kappa, xi in product(kappa_arr, xi_arr)
     ]
 

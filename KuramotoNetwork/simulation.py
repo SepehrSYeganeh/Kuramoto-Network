@@ -33,7 +33,8 @@ def initialize_Normal_omega_2D(L: int, sigma: float) -> np.ndarray:
 class KuramotoGrid1D:
     dim = 1
 
-    def __init__(self, N: int, sigma: float, kappa: float, xi: float,
+    def __init__(self, path: str,
+                 N: int, sigma: float, kappa: float, xi: float,
                  steps: int, dt: float, snapshot_frames: int,
                  init_theta: np.ndarray, init_omega: np.ndarray):
         """
@@ -59,9 +60,9 @@ class KuramotoGrid1D:
         self.theta_arr = init_theta
         self.omega_arr = init_omega
 
-        # initialize data files
+        # initialize data file
         self.filename = io.make_filename(self.dim, self.N, self.kappa, self.sigma, self.xi, self.steps)
-        io.init_data(self.filename, self.N)
+        self.path = io.init_data_file(path, self.filename, self.N)
         self.update_files()
 
     #################################################
@@ -104,7 +105,7 @@ class KuramotoGrid1D:
 
     def update_files(self) -> None:
         r, psi = self.order_parameter()
-        io.append_data(self.filename, self.time, r, psi, self.theta_arr)
+        io.append_data(self.path, self.time, r, psi, self.theta_arr)
 
     #################################################
     # simulation
@@ -122,7 +123,8 @@ class KuramotoGrid1D:
 class KuramotoGrid2D:
     dim = 2
 
-    def __init__(self, L: int, sigma: float, kappa: float, xi: float,
+    def __init__(self, path: str,
+                 L: int, sigma: float, kappa: float, xi: float,
                  steps: int, dt: float, snapshot_frames: int,
                  init_theta: np.ndarray, init_omega: np.ndarray):
         """
@@ -153,7 +155,7 @@ class KuramotoGrid2D:
 
         # initialize data files
         self.filename = io.make_filename(self.dim, self.N, self.kappa, self.sigma, self.xi, self.steps)
-        io.init_data(self.filename, self.N)
+        self.path = io.init_data_file(path, self.filename, self.N)
         self.update_files()
 
     #################################################
@@ -202,7 +204,7 @@ class KuramotoGrid2D:
 
     def update_files(self) -> None:
         r, psi = self.order_parameter()
-        io.append_data(self.filename, self.time, r, psi, self.theta_arr.flatten())
+        io.append_data(self.path, self.time, r, psi, self.theta_arr.flatten())
 
     #################################################
     # run simulation

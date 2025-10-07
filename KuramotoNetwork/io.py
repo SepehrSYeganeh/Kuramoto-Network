@@ -2,25 +2,39 @@ import os
 import csv
 import pandas as pd
 
+SIM_PATH = "simulations"
 
-def make_filename(dim: int, N: int, kappa: float, sigma: float, xi: float, T: int):
+
+def init_simulation_directory(name: str) -> os.PathLike:
+    path = os.path.join(SIM_PATH, name)
+    os.makedirs(path, exist_ok=True)
+    data_path = os.path.join(path, "data")
+    os.makedirs(data_path, exist_ok=True)
+    fig_path = os.path.join(path, "fig")
+    os.makedirs(fig_path, exist_ok=True)
+    return path
+
+
+def make_filename(dim: int, N: int, kappa: float, sigma: float, xi: float, T: int) -> str:
     return f"D{dim}-N{N}-K{kappa:.3f}-std{sigma:.3f}-xi{xi:.3f}-T{T}"
 
 
-def init_data(filename: str, N: int) -> None:
-    FILENAME = f"data/{filename}.csv"
+def init_data_file(path: os.PathLike, filename: str, N: int) -> os.PathLike:
+    FILE = os.path.join("data", f"{filename}.csv")
+    PATH = os.path.join(path, FILE)
     HEADER = ["t", 'r', 'psi'] + [f"theta{i}" for i in range(N)]
-    os.makedirs(os.path.dirname(FILENAME), exist_ok=True)
-    with open(FILENAME, mode="w", newline="") as f:
+    os.makedirs(os.path.dirname(PATH), exist_ok=True)
+    with open(PATH, mode="w", newline="") as f:
         writer = csv.writer(f)
         writer.writerow(HEADER)
+    return PATH
 
 
-def append_data(filename: str, time: float, r: float, psi: float, angles) -> None:
-    with open(f"data/{filename}.csv", mode="a", newline="") as f:
+def append_data(path: os.PathLike, time: float, r: float, psi: float, angles) -> None:
+    with open(path, mode="a", newline="") as f:
         writer = csv.writer(f)
         writer.writerow([time, r, psi] + list(angles))
 
 
-def load_data(filename: str) -> pd.DataFrame:
-    return pd.read_csv(f"data/{filename}.csv")
+def load_data(path: os.PathLike) -> pd.DataFrame:
+    return pd.read_csv(path)
