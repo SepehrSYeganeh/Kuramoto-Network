@@ -43,3 +43,9 @@ def init_anim_directory(fig_path: os.PathLike) -> os.PathLike:
     PATH = os.path.join(fig_path, "animations")
     os.makedirs(PATH, exist_ok=True)
     return PATH
+
+
+def init_rt_directory(fig_path: os.PathLike) -> os.PathLike:
+    PATH = os.path.join(fig_path, "r-time")
+    os.makedirs(PATH, exist_ok=True)
+    return PATH

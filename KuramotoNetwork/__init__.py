@@ -90,15 +90,19 @@ def animate_simulations(fig_path: str,
     print("All animations finished")
 
 
-def r_in_time(dim: int,
+def r_in_time(fig_path: str,
+              data_path: str,
+              dim: int,
               N: int,
               sigma: float,
               kappa_arr: np.ndarray,
               xi_arr: np.ndarray,
               steps: int
               ) -> None:
+    rt_path = io.init_rt_directory(fig_path)
+
     args_list = [
-        (dim, N, kappa, sigma, xi, steps)
+        (rt_path, data_path, dim, N, kappa, sigma, xi, steps)
         for kappa, xi in product(kappa_arr, xi_arr)
     ]
 
