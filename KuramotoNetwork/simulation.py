@@ -32,6 +32,7 @@ def initialize_Normal_omega_2D(L: int, sigma: float) -> np.ndarray:
 
 class KuramotoGrid1D:
     dim = 1
+    relaxed_ratio = 0.1
 
     def __init__(self, path: str,
                  N: int, sigma: float, kappa: float, xi: float,
@@ -63,7 +64,6 @@ class KuramotoGrid1D:
         # initialize data file
         self.filename = io.make_filename(self.dim, self.N, self.kappa, self.sigma, self.xi, self.steps)
         self.path = io.init_data_file(path, self.filename, self.N)
-        self.update_files()
 
     #################################################
     # order parameter
@@ -111,7 +111,23 @@ class KuramotoGrid1D:
     # simulation
     #################################################
     def run(self) -> None:
-        for t in range(self.steps):
+        self.update_files()
+        for t in range(1, self.steps + 1):
+            self.time += self.dt
+            self.update_phases()
+            if t % self.snapshot_frames == 0:
+                self.update_files()
+
+    def run_relaxed(self) -> None:
+        relaxed_steps = int(self.steps * self.relaxed_ratio)
+        transient_steps = self.steps - relaxed_steps
+
+        for _ in range(transient_steps):
+            self.time += self.dt
+            self.update_phases()
+
+        self.update_files()
+        for t in range(relaxed_steps + 1):
             self.time += self.dt
             self.update_phases()
             if t % self.snapshot_frames == 0:
@@ -122,6 +138,7 @@ class KuramotoGrid1D:
 ###################################################################################
 class KuramotoGrid2D:
     dim = 2
+    relaxed_ratio = 0.1
 
     def __init__(self, path: str,
                  L: int, sigma: float, kappa: float, xi: float,
@@ -156,7 +173,6 @@ class KuramotoGrid2D:
         # initialize data files
         self.filename = io.make_filename(self.dim, self.N, self.kappa, self.sigma, self.xi, self.steps)
         self.path = io.init_data_file(path, self.filename, self.N)
-        self.update_files()
 
     #################################################
     # order parameter
@@ -210,7 +226,23 @@ class KuramotoGrid2D:
     # run simulation
     #################################################
     def run(self) -> None:
+        self.update_files()
         for t in range(1, self.steps + 1):
+            self.time += self.dt
+            self.update_phases()
+            if t % self.snapshot_frames == 0:
+                self.update_files()
+
+    def run_relaxed(self) -> None:
+        relaxed_steps = int(self.steps * self.relaxed_ratio)
+        transient_steps = self.steps - relaxed_steps
+
+        for _ in range(transient_steps):
+            self.time += self.dt
+            self.update_phases()
+
+        self.update_files()
+        for t in range(relaxed_steps + 1):
             self.time += self.dt
             self.update_phases()
             if t % self.snapshot_frames == 0:

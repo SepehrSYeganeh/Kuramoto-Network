@@ -112,23 +112,55 @@ def r_in_time(fig_path: str,
     print("All plots finished")
 
 
-def r_infty_kappa(dim: int,
-                  N: int,
-                  sigma: float,
-                  kappa_arr: np.ndarray,
-                  xi_arr: np.ndarray,
-                  steady_state: int  # number of steady state steps
-                  ) -> None:
-    # TODO: first make r = f(kappa,xi) then plot
+def _simulation1D_relaxed(args) -> None:
+    """run a single simulation for 1-dimensional grid"""
+    path, N, sigma, kappa, xi, steps, dt, snapshot_frames, init_theta, init_omega = args
+    kuramoto1d = KuramotoGrid1D(path,
+                                N, sigma, kappa, xi,
+                                steps, dt, snapshot_frames,
+                                init_theta, init_omega)
+    kuramoto1d.run_relaxed()
+    print(f"simulation done for kappa={kappa} and xi={xi}")
+
+
+def _simulation2D_relaxed(args) -> None:
+    """run a single simulation for 2-dimensional grid"""
+    path, N, sigma, kappa, xi, steps, dt, snapshot_frames, init_theta, init_omega = args
+    kuramoto2d = KuramotoGrid2D(path,
+                                N, sigma, kappa, xi,
+                                steps, dt, snapshot_frames,
+                                init_theta, init_omega)
+    kuramoto2d.run_relaxed()
+    print(f"simulation done for kappa={kappa}")
+
+
+def generate_relaxed_data(data_path: str,
+                          dim: int,
+                          N: int,  # L for 2d dimension
+                          sigma: float,
+                          kappa_arr: np.ndarray,
+                          xi_arr: np.ndarray,
+                          steps: int,
+                          dt: float,
+                          snapshot_frames: int,
+                          init_theta: np.ndarray,
+                          init_omega: np.ndarray
+                          ) -> None:
     args_list = [
-        (dim, N, kappa, sigma, xi, steady_state)
+        (data_path,
+         N, sigma, kappa, xi,
+         steps, dt, snapshot_frames,
+         init_theta, init_omega)
         for kappa, xi in product(kappa_arr, xi_arr)
     ]
 
     with mp.Pool(processes=mp.cpu_count()) as pool:
-        pool.map(visualization.plot_r_infty_kappa, args_list)
+        if dim == 1:
+            pool.map(_simulation1D_relaxed, args_list)
+        elif dim == 2:
+            pool.map(_simulation2D_relaxed, args_list)
 
-    print("All plots finished")
+    print("All simulations finished")
 
 
 def critical_kappa_1d():
