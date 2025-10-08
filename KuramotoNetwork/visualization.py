@@ -76,10 +76,15 @@ def plot_r_time(args) -> None:
     print(f"plot done for kappa={kappa} and xi={xi}")
 
 
-def plot_r_infty_kappa(rk_path: os.PathLike, results: np.ndarray) -> None:
+def plot_r_infty_kappa(rk_path: os.PathLike,
+                       k_arr: np.ndarray, xi_arr: np.ndarray, r_arr: np.ndarray) -> None:
     # TODO: only this
-    print(rk_path)
-    print(results)
+    plt.plot(k_arr, r_arr)
+    plt.xlabel(r"$\kappa$")
+    plt.ylabel(r"$r_\infty$")
+    plt.title("Stable State Order Parameter versus Coupling Strength")
+    plt.savefig(os.path.join(rk_path, "r-k.png"), dpi=300)
+    plt.close()
 
 
 def plot_critical_kappa(kappa_arr, r_arr, dim, xi):

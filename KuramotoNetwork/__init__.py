@@ -192,7 +192,7 @@ def r_infty_kappa(fig_path: str,
     results = np.array(results).T
     rk_path = io.init_rk_directory(fig_path)
 
-    visualization.plot_r_infty_kappa(rk_path, results)
+    visualization.plot_r_infty_kappa(rk_path, results[0], results[1], results[2])
 
     print("plot finished")
 
